@@ -1,0 +1,2801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Coralog Codas: Decoding Whale Dialects</title>
+
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+
+
+<style>
+
+:root{
+  --bg:#07100f;
+  --panel:#0c1816;
+  --panel2:#101f1c;
+  --line:#25403a;
+  --text:#edf7f3;
+  --muted:#8fa8a0;
+  --accent:#75e6c4;
+  --accent2:#54b99e;
+  --danger:#ff8b8b;
+  --yellow:#e7d58a;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(50,130,110,.15),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(70,120,150,.12),
+      transparent 30%
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  min-height:100vh;
+}
+
+.container{
+  width:min(1200px,94%);
+  margin:auto;
+  padding:35px 0 60px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:25px;
+  margin-bottom:35px;
+}
+
+.logo{
+  font-family:"DM Mono",monospace;
+  letter-spacing:.08em;
+  font-size:13px;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+
+h1{
+  font-size:42px;
+  line-height:1.08;
+  margin:0;
+  max-width:720px;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin-top:14px;
+  max-width:760px;
+  line-height:1.65;
+}
+
+.status{
+  border:1px solid var(--line);
+  background:rgba(12,24,22,.8);
+  padding:10px 14px;
+  border-radius:999px;
+  font-family:"DM Mono",monospace;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.status.online{
+  color:var(--accent);
+}
+
+.status.offline{
+  color:var(--danger);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:340px 1fr;
+  gap:18px;
+}
+
+.panel{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17,32,29,.96),
+      rgba(9,19,17,.96)
+    );
+
+  border:1px solid var(--line);
+
+  border-radius:18px;
+
+  padding:20px;
+
+  box-shadow:
+    0 15px 50px rgba(0,0,0,.2);
+}
+
+.panel h2{
+  font-size:17px;
+  margin:0 0 5px;
+}
+
+.panel-desc{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+  margin-bottom:18px;
+}
+
+.section-title{
+  font-family:"DM Mono",monospace;
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin:22px 0 10px;
+}
+
+.sample-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+button{
+  border:1px solid var(--line);
+  background:#10221e;
+  color:var(--text);
+
+  border-radius:10px;
+
+  padding:10px 12px;
+
+  cursor:pointer;
+
+  font-family:
+    Inter,
+    sans-serif;
+
+  transition:.2s;
+}
+
+button:hover{
+  border-color:var(--accent2);
+  background:#15302a;
+}
+
+button.primary{
+  background:var(--accent);
+  color:#062019;
+  border-color:var(--accent);
+  font-weight:700;
+}
+
+button.primary:hover{
+  background:#8cefd3;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.upload-box{
+  border:1px dashed #3b6258;
+  border-radius:13px;
+  padding:15px;
+  background:rgba(5,15,13,.35);
+}
+
+input[type=file]{
+  width:100%;
+  color:var(--muted);
+  font-size:12px;
+}
+
+input[type=file]::file-selector-button{
+  border:1px solid var(--line);
+  background:#10221e;
+  color:var(--text);
+  border-radius:8px;
+  padding:8px 10px;
+  margin-right:8px;
+  cursor:pointer;
+}
+
+.audio-player{
+  display:none;
+  margin-top:14px;
+  padding:12px;
+  border-radius:12px;
+  background:#091512;
+  border:1px solid var(--line);
+}
+
+.audio-label{
+  font-size:11px;
+  font-family:"DM Mono",monospace;
+  color:var(--accent);
+  margin-bottom:8px;
+}
+
+audio{
+  width:100%;
+  height:38px;
+}
+
+.file-name{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:7px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.analyse-btn{
+  width:100%;
+  margin-top:12px;
+}
+
+.legend{
+  display:grid;
+  gap:8px;
+}
+
+.legend-row{
+  display:flex;
+  justify-content:space-between;
+
+  font-size:12px;
+
+  padding:8px 10px;
+
+  border-radius:8px;
+
+  background:#0a1714;
+}
+
+.legend-row span:last-child{
+  color:var(--accent);
+
+  font-family:
+    "DM Mono",
+    monospace;
+}
+
+.main{
+  display:grid;
+  gap:18px;
+}
+
+.visual-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.visual-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  background:#081512;
+}
+
+.visual-card h3{
+  margin:0 0 10px;
+  font-size:13px;
+}
+
+.canvas-wrap{
+  width:100%;
+  height:230px;
+  background:#030807;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid #172b26;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.prediction{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.metric{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+  background:#091613;
+}
+
+.metric-label{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:7px;
+}
+
+.metric-value{
+  font-size:22px;
+  font-weight:700;
+}
+
+.metric-small{
+  color:var(--accent);
+  font-family:"DM Mono",monospace;
+  font-size:12px;
+}
+
+.prob-list{
+  display:grid;
+  gap:7px;
+}
+
+.prob{
+  display:grid;
+  grid-template-columns:100px 1fr 55px;
+  align-items:center;
+  gap:9px;
+  font-size:11px;
+}
+
+.bar{
+  height:7px;
+  background:#142823;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:999px;
+  width:0%;
+}
+
+.tokens{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.token{
+  padding:7px 9px;
+
+  border:1px solid #315148;
+
+  border-radius:8px;
+
+  background:#0c1b18;
+
+  font-family:
+    "DM Mono",
+    monospace;
+
+  font-size:11px;
+
+  color:#b9eee0;
+}
+
+.info{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.loading{
+  color:var(--yellow);
+}
+
+.error{
+  color:var(--danger);
+}
+
+.success{
+  color:var(--accent);
+}
+
+.empty{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:100%;
+
+  color:#526861;
+
+  font-family:
+    "DM Mono",
+    monospace;
+
+  font-size:11px;
+}
+
+.footer{
+  text-align:center;
+
+  color:#526861;
+
+  font-family:
+    "DM Mono",
+    monospace;
+
+  font-size:10px;
+
+  margin-top:30px;
+}
+
+
+/* =========================================
+   MAP LEGEND
+========================================= */
+
+.map-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+
+  margin-top:12px;
+
+  padding-top:12px;
+
+  border-top:1px solid #1d3530;
+}
+
+.map-legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  font-size:10px;
+
+  color:var(--muted);
+
+  font-family:
+    "DM Mono",
+    monospace;
+}
+
+.map-dot{
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+}
+
+.current-dot{
+  width:10px;
+  height:10px;
+
+  border-radius:50%;
+
+  background:var(--accent);
+
+  box-shadow:
+    0 0 8px var(--accent);
+}
+
+
+/* =========================================
+   MAP INFO
+========================================= */
+
+.map-info{
+  margin-top:10px;
+
+  font-size:11px;
+
+  color:var(--muted);
+
+  line-height:1.5;
+}
+
+
+@media(max-width:900px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .visual-grid{
+    grid-template-columns:1fr;
+  }
+
+  header{
+    flex-direction:column;
+  }
+
+  h1{
+    font-size:34px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<header>
+
+  <div>
+
+    <div class="logo">
+      CORALOG / AUDIO INTELLIGENCE
+    </div>
+
+    <h1>
+      Decoding Whale Dialects
+    </h1>
+
+    <div class="subtitle">
+
+      Analyse underwater coda recordings with
+      CodaNet and visualize acoustic structure,
+      predicted clan, attention patterns and
+      learned dialect space.
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="status"
+    class="status"
+  >
+    ● CONNECTING
+  </div>
+
+</header>
+
+
+
+<div class="grid">
+
+
+<!-- ======================================
+     LEFT CONTROL PANEL
+====================================== -->
+
+<aside class="panel">
+
+  <h2>
+    Audio input
+  </h2>
+
+  <div class="panel-desc">
+
+    Choose a built-in test signal or upload
+    your own whale recording.
+
+  </div>
+
+
+  <div class="section-title">
+    Quick samples
+  </div>
+
+
+  <div class="sample-grid">
+
+    <button onclick="runSample(0)">
+      Sample 0
+    </button>
+
+    <button onclick="runSample(1)">
+      Sample 1
+    </button>
+
+    <button onclick="runSample(2)">
+      Sample 2
+    </button>
+
+    <button onclick="runSample(3)">
+      Sample 3
+    </button>
+
+    <button
+      onclick="runSample('noise')"
+      style="grid-column:1 / -1;"
+    >
+      Noise
+    </button>
+
+  </div>
+
+
+
+  <div class="section-title">
+    Upload recording
+  </div>
+
+
+  <div class="upload-box">
+
+    <input
+      type="file"
+      id="audioInput"
+      accept="audio/*,.wav"
+    >
+
+
+    <!-- ==================================
+         AUDIO PLAYER
+    =================================== -->
+
+    <div
+      id="audioPlayerBox"
+      class="audio-player"
+    >
+
+      <div class="audio-label">
+        🎧 LISTEN TO UPLOADED RECORDING
+      </div>
+
+      <audio
+        id="uploadedAudio"
+        controls
+        preload="metadata"
+      >
+        Your browser does not support
+        audio playback.
+      </audio>
+
+      <div
+        id="fileName"
+        class="file-name"
+      ></div>
+
+    </div>
+
+
+    <button
+      id="analyseBtn"
+      class="primary analyse-btn"
+      onclick="analyseUploaded()"
+      disabled
+    >
+      Analyse uploaded audio
+    </button>
+
+  </div>
+
+
+
+  <div class="section-title">
+    Current analysis
+  </div>
+
+
+  <div class="legend">
+
+    <div class="legend-row">
+
+      <span>
+        Model
+      </span>
+
+      <span>
+        CodaNet
+      </span>
+
+    </div>
+
+
+    <div class="legend-row">
+
+      <span>
+        Input
+      </span>
+
+      <span id="inputType">
+        —
+      </span>
+
+    </div>
+
+
+    <div class="legend-row">
+
+      <span>
+        Status
+      </span>
+
+      <span id="analysisStatus">
+        Ready
+      </span>
+
+    </div>
+
+  </div>
+
+</aside>
+
+
+
+<!-- ======================================
+     MAIN CONTENT
+====================================== -->
+
+<main class="main">
+
+
+<!-- ======================================
+     PREDICTION
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    Model prediction
+  </h2>
+
+  <div class="panel-desc">
+
+    CodaNet prediction generated from
+    the selected audio.
+
+  </div>
+
+
+  <div class="prediction">
+
+
+    <div class="metric">
+
+      <div class="metric-label">
+        Predicted clan
+      </div>
+
+      <div
+        id="clanValue"
+        class="metric-value"
+      >
+        —
+      </div>
+
+      <div
+        id="clanConfidence"
+        class="metric-small"
+      >
+        Awaiting analysis
+      </div>
+
+    </div>
+
+
+
+    <div class="metric">
+
+      <div class="metric-label">
+        Context
+      </div>
+
+      <div
+        id="contextValue"
+        class="metric-value"
+      >
+        —
+      </div>
+
+      <div
+        id="contextConfidence"
+        class="metric-small"
+      >
+        Awaiting analysis
+      </div>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================
+     SPECTROGRAM + ATTENTION
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    Acoustic analysis
+  </h2>
+
+  <div class="panel-desc">
+
+    Real model outputs returned by
+    the Python CodaNet backend.
+
+  </div>
+
+
+  <div class="visual-grid">
+
+
+    <div class="visual-card">
+
+      <h3>
+        Mel spectrogram
+      </h3>
+
+      <div class="canvas-wrap">
+
+        <canvas
+          id="melCanvas"
+        ></canvas>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="visual-card">
+
+      <h3>
+        Model attention
+      </h3>
+
+      <div class="canvas-wrap">
+
+        <canvas
+          id="attCanvas"
+        ></canvas>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================
+     PROBABILITIES
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    Clan probabilities
+  </h2>
+
+  <div class="panel-desc">
+
+    Probability distribution returned
+    by CodaNet.
+
+  </div>
+
+
+  <div
+    id="probabilities"
+    class="prob-list"
+  >
+
+    <div class="empty">
+      No prediction yet
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================
+     TOKENS
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    What the model heard
+  </h2>
+
+  <div class="panel-desc">
+
+    Acoustic tokens extracted from
+    the model representation.
+
+  </div>
+
+
+  <div
+    id="tokens"
+    class="tokens"
+  >
+
+    <span class="empty">
+      No tokens yet
+    </span>
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================
+     DIALECT EMBEDDING MAP
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    Dialect embedding map
+  </h2>
+
+  <div class="panel-desc">
+
+    PCA projection of learned acoustic
+    representations from the reference
+    dataset. The highlighted point is
+    the coda currently being analysed.
+
+  </div>
+
+
+  <div
+    class="canvas-wrap"
+    style="height:350px;"
+  >
+
+    <canvas
+      id="mapCanvas"
+    ></canvas>
+
+  </div>
+
+
+  <!-- Dynamic legend -->
+
+  <div
+    id="mapLegend"
+    class="map-legend"
+  ></div>
+
+
+  <div class="map-info">
+
+    Each small point represents a reference
+    coda in the learned embedding space.
+    Different colors represent different
+    clans. The glowing point represents
+    the currently analysed recording.
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================
+     STATUS
+====================================== -->
+
+<div class="panel">
+
+  <h2>
+    Analysis status
+  </h2>
+
+  <div
+    id="message"
+    class="info"
+  >
+
+    Choose a sample or upload an audio
+    recording to begin.
+
+  </div>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+
+<div class="footer">
+
+  CORALOG · CODANET · UNDERWATER AUDIO INTELLIGENCE
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   GLOBAL STATE
+===================================================== */
+
+let META = {
+  clans: [],
+  contexts: [],
+  map: []
+};
+
+let currentAudioURL = null;
+
+
+
+/* =====================================================
+   DOM ELEMENTS
+===================================================== */
+
+const statusEl =
+  document.getElementById("status");
+
+const audioInput =
+  document.getElementById("audioInput");
+
+const uploadedAudio =
+  document.getElementById("uploadedAudio");
+
+const audioPlayerBox =
+  document.getElementById("audioPlayerBox");
+
+const fileNameEl =
+  document.getElementById("fileName");
+
+const analyseBtn =
+  document.getElementById("analyseBtn");
+
+
+
+/* =====================================================
+   INITIALIZE BACKEND
+===================================================== */
+
+async function init(){
+
+  try{
+
+    const response =
+      await fetch("/meta");
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Backend metadata unavailable"
+      );
+
+    }
+
+
+    META =
+      await response.json();
+
+
+    console.log(
+      "Coralog metadata:",
+      META
+    );
+
+
+    statusEl.textContent =
+      "● BACKEND ONLINE";
+
+    statusEl.classList.add(
+      "online"
+    );
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="success">' +
+      'Backend connected. Ready for audio analysis.' +
+      '</span>';
+
+
+    /*
+      Draw reference map immediately
+      if backend supplied it.
+    */
+
+    drawMap(null);
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    statusEl.textContent =
+      "● BACKEND OFFLINE";
+
+    statusEl.classList.add(
+      "offline"
+    );
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="error">' +
+      'Could not connect to the Coralog Python backend.' +
+      '</span>';
+
+  }
+
+}
+
+
+
+/* =====================================================
+   AUDIO FILE SELECTION
+===================================================== */
+
+audioInput.addEventListener(
+  "change",
+  function(){
+
+    const file =
+      audioInput.files[0];
+
+
+    if(!file){
+
+      audioPlayerBox.style.display =
+        "none";
+
+      analyseBtn.disabled =
+        true;
+
+      fileNameEl.textContent =
+        "";
+
+      return;
+
+    }
+
+
+    /*
+      Release previous browser URL.
+    */
+
+    if(currentAudioURL){
+
+      URL.revokeObjectURL(
+        currentAudioURL
+      );
+
+    }
+
+
+    /*
+      Create browser URL for
+      immediate playback.
+    */
+
+    currentAudioURL =
+      URL.createObjectURL(file);
+
+
+    uploadedAudio.src =
+      currentAudioURL;
+
+
+    uploadedAudio.load();
+
+
+    audioPlayerBox.style.display =
+      "block";
+
+
+    analyseBtn.disabled =
+      false;
+
+
+    fileNameEl.textContent =
+      file.name;
+
+
+    document.getElementById(
+      "inputType"
+    ).textContent =
+      "Uploaded audio";
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Ready";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="success">' +
+      'Audio loaded. Press ▶ to listen or Analyse uploaded audio to run CodaNet.' +
+      '</span>';
+
+  }
+);
+
+
+
+/* =====================================================
+   ANALYSE UPLOADED AUDIO
+===================================================== */
+
+async function analyseUploaded(){
+
+  const file =
+    audioInput.files[0];
+
+
+  if(!file){
+
+    alert(
+      "Please select an audio file first."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    analyseBtn.disabled =
+      true;
+
+
+    analyseBtn.textContent =
+      "Analysing...";
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Running";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="loading">' +
+      'Sending audio to CodaNet...' +
+      '</span>';
+
+
+    const arrayBuffer =
+      await file.arrayBuffer();
+
+
+    const response =
+      await fetch(
+        "/",
+        {
+
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              file.type ||
+              "audio/wav"
+          },
+
+          body:arrayBuffer
+
+        }
+      );
+
+
+    if(!response.ok){
+
+      const errorText =
+        await response.text();
+
+      throw new Error(
+        errorText ||
+        "Audio analysis failed"
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Uploaded audio result:",
+      data
+    );
+
+
+    renderResult(data);
+
+
+    document.getElementById(
+      "inputType"
+    ).textContent =
+      file.name;
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Complete";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="success">' +
+      '✓ Analysis complete. Results were generated by CodaNet.' +
+      '</span>';
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Error";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="error">' +
+      'Analysis failed: ' +
+      escapeHTML(error.message) +
+      '</span>';
+
+  }
+
+
+  analyseBtn.disabled =
+    false;
+
+
+  analyseBtn.textContent =
+    "Analyse uploaded audio";
+
+}
+
+
+
+/* =====================================================
+   BUILT-IN SAMPLE
+===================================================== */
+
+async function runSample(k){
+
+  try{
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Running";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="loading">' +
+      'Generating sample and running CodaNet...' +
+      '</span>';
+
+
+    const response =
+      await fetch(
+        "/sample/" + k,
+        {
+          method:"POST"
+        }
+      );
+
+
+    if(!response.ok){
+
+      const errorText =
+        await response.text();
+
+      throw new Error(
+        errorText ||
+        "Sample analysis failed"
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Sample result:",
+      data
+    );
+
+
+    renderResult(data);
+
+
+    document.getElementById(
+      "inputType"
+    ).textContent =
+      "Sample " + k;
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Complete";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="success">' +
+      '✓ Sample analysed successfully.' +
+      '</span>';
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    document.getElementById(
+      "analysisStatus"
+    ).textContent =
+      "Error";
+
+
+    document.getElementById(
+      "message"
+    ).innerHTML =
+      '<span class="error">' +
+      escapeHTML(error.message) +
+      '</span>';
+
+  }
+
+}
+
+
+
+/* =====================================================
+   RENDER MODEL RESULT
+===================================================== */
+
+function renderResult(data){
+
+  console.log(
+    "Model result:",
+    data
+  );
+
+
+  /* ---------------------------------
+     CLAN PROBABILITIES
+  --------------------------------- */
+
+  const probs =
+    data.probs || [];
+
+
+  let bestClanIndex =
+    0;
+
+  let bestClanProb =
+    0;
+
+
+  probs.forEach(
+    (p,i)=>{
+
+      if(Number(p) > bestClanProb){
+
+        bestClanProb =
+          Number(p);
+
+        bestClanIndex =
+          i;
+
+      }
+
+    }
+  );
+
+
+  const clanName =
+    META.clans &&
+    META.clans[bestClanIndex]
+      ? META.clans[bestClanIndex]
+      : "Clan " +
+        bestClanIndex;
+
+
+  document.getElementById(
+    "clanValue"
+  ).textContent =
+    clanName;
+
+
+  document.getElementById(
+    "clanConfidence"
+  ).textContent =
+    (bestClanProb * 100)
+      .toFixed(1) +
+    "% confidence";
+
+
+
+  /* ---------------------------------
+     CONTEXT
+  --------------------------------- */
+
+  const cprobs =
+    data.cprobs || [];
+
+
+  let bestContextIndex =
+    0;
+
+  let bestContextProb =
+    0;
+
+
+  cprobs.forEach(
+    (p,i)=>{
+
+      if(Number(p) > bestContextProb){
+
+        bestContextProb =
+          Number(p);
+
+        bestContextIndex =
+          i;
+
+      }
+
+    }
+  );
+
+
+  const contextName =
+    META.contexts &&
+    META.contexts[bestContextIndex]
+      ? META.contexts[bestContextIndex]
+      : "Context " +
+        bestContextIndex;
+
+
+  document.getElementById(
+    "contextValue"
+  ).textContent =
+    contextName;
+
+
+  document.getElementById(
+    "contextConfidence"
+  ).textContent =
+    cprobs.length
+      ? (
+          bestContextProb * 100
+        ).toFixed(1) +
+        "% confidence"
+      : "No context prediction";
+
+
+
+  /* ---------------------------------
+     PROBABILITY BARS
+  --------------------------------- */
+
+  renderProbabilities(
+    probs
+  );
+
+
+
+  /* ---------------------------------
+     TOKENS
+  --------------------------------- */
+
+  renderTokens(
+    data.tokens || []
+  );
+
+
+
+  /* ---------------------------------
+     MEL SPECTROGRAM
+  --------------------------------- */
+
+  if(data.mel){
+
+    drawMatrix(
+      document.getElementById(
+        "melCanvas"
+      ),
+      data.mel
+    );
+
+  }
+
+
+
+  /* ---------------------------------
+     ATTENTION
+  --------------------------------- */
+
+  if(data.att){
+
+    drawMatrix(
+      document.getElementById(
+        "attCanvas"
+      ),
+      data.att
+    );
+
+  }
+
+
+
+  /* ---------------------------------
+     DIALECT MAP
+  --------------------------------- */
+
+  drawMap(
+    data.point || null
+  );
+
+}
+
+
+
+/* =====================================================
+   PROBABILITY BARS
+===================================================== */
+
+function renderProbabilities(probs){
+
+  const container =
+    document.getElementById(
+      "probabilities"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  if(!probs.length){
+
+    container.innerHTML =
+      '<div class="empty">' +
+      'No probability data returned' +
+      '</div>';
+
+    return;
+
+  }
+
+
+  probs.forEach(
+    (value,index)=>{
+
+      const number =
+        Number(value);
+
+
+      const name =
+        META.clans &&
+        META.clans[index]
+          ? META.clans[index]
+          : "Clan " +
+            index;
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "prob";
+
+
+      row.innerHTML = `
+
+        <div>
+          ${escapeHTML(name)}
+        </div>
+
+        <div class="bar">
+
+          <div
+            class="fill"
+            style="width:${Math.max(
+              0,
+              Math.min(
+                100,
+                number * 100
+              )
+            )}%"
+          ></div>
+
+        </div>
+
+        <div>
+          ${(number * 100).toFixed(1)}%
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+
+/* =====================================================
+   TOKENS
+===================================================== */
+
+function renderTokens(tokens){
+
+  const container =
+    document.getElementById(
+      "tokens"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  if(!tokens.length){
+
+    container.innerHTML =
+      '<span class="empty">' +
+      'No token data returned' +
+      '</span>';
+
+    return;
+
+  }
+
+
+  tokens.forEach(
+    token=>{
+
+      const element =
+        document.createElement(
+          "span"
+        );
+
+
+      element.className =
+        "token";
+
+
+      element.textContent =
+        typeof token === "object"
+          ? JSON.stringify(token)
+          : String(token);
+
+
+      container.appendChild(
+        element
+      );
+
+    }
+  );
+
+}
+
+
+
+/* =====================================================
+   MEL / ATTENTION HEATMAP
+===================================================== */
+
+function drawMatrix(
+  canvas,
+  matrix
+){
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  if(
+    !matrix ||
+    !matrix.length ||
+    !matrix[0] ||
+    !matrix[0].length
+  ){
+
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    return;
+
+  }
+
+
+  const rows =
+    matrix.length;
+
+
+  const cols =
+    matrix[0].length;
+
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+
+  canvas.width =
+    canvas.clientWidth * dpr;
+
+
+  canvas.height =
+    canvas.clientHeight * dpr;
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  const width =
+    canvas.clientWidth;
+
+
+  const height =
+    canvas.clientHeight;
+
+
+  let min =
+    Infinity;
+
+
+  let max =
+    -Infinity;
+
+
+  for(
+    let y=0;
+    y<rows;
+    y++
+  ){
+
+    for(
+      let x=0;
+      x<cols;
+      x++
+    ){
+
+      const v =
+        Number(
+          matrix[y][x]
+        ) || 0;
+
+
+      min =
+        Math.min(
+          min,
+          v
+        );
+
+
+      max =
+        Math.max(
+          max,
+          v
+        );
+
+    }
+
+  }
+
+
+  const range =
+    max - min || 1;
+
+
+  const cellW =
+    width / cols;
+
+
+  const cellH =
+    height / rows;
+
+
+  for(
+    let y=0;
+    y<rows;
+    y++
+  ){
+
+    for(
+      let x=0;
+      x<cols;
+      x++
+    ){
+
+      const v =
+        Number(
+          matrix[y][x]
+        ) || 0;
+
+
+      const normalized =
+        (v - min) /
+        range;
+
+
+      const r =
+        Math.floor(
+          10 +
+          normalized * 80
+        );
+
+
+      const g =
+        Math.floor(
+          35 +
+          normalized * 210
+        );
+
+
+      const b =
+        Math.floor(
+          30 +
+          normalized * 150
+        );
+
+
+      ctx.fillStyle =
+        `rgb(${r},${g},${b})`;
+
+
+      ctx.fillRect(
+        x * cellW,
+        y * cellH,
+        Math.ceil(cellW) + 1,
+        Math.ceil(cellH) + 1
+      );
+
+    }
+
+  }
+
+}
+
+
+
+/* =====================================================
+   DIALECT EMBEDDING MAP
+===================================================== */
+
+function drawMap(point){
+
+  const canvas =
+    document.getElementById(
+      "mapCanvas"
+    );
+
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+
+  canvas.width =
+    canvas.clientWidth * dpr;
+
+
+  canvas.height =
+    canvas.clientHeight * dpr;
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  const width =
+    canvas.clientWidth;
+
+
+  const height =
+    canvas.clientHeight;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+
+  /* ======================================
+     BACKGROUND
+  ====================================== */
+
+  ctx.fillStyle =
+    "#030807";
+
+
+  ctx.fillRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+
+
+  /* ======================================
+     GRID
+  ====================================== */
+
+  ctx.strokeStyle =
+    "rgba(100,150,140,.13)";
+
+
+  ctx.lineWidth =
+    1;
+
+
+  for(
+    let x=0;
+    x<=width;
+    x+=40
+  ){
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      0
+    );
+
+    ctx.lineTo(
+      x,
+      height
+    );
+
+    ctx.stroke();
+
+  }
+
+
+  for(
+    let y=0;
+    y<=height;
+    y+=40
+  ){
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      0,
+      y
+    );
+
+    ctx.lineTo(
+      width,
+      y
+    );
+
+    ctx.stroke();
+
+  }
+
+
+
+  /* ======================================
+     REFERENCE DATA
+  ====================================== */
+
+  const referencePoints =
+    Array.isArray(META.map)
+      ? META.map
+      : [];
+
+
+  /*
+    Backend format:
+
+    [
+      PCA_X,
+      PCA_Y,
+      CLAN_INDEX
+    ]
+  */
+
+
+  const allPoints = [];
+
+
+  referencePoints.forEach(
+    p=>{
+
+      if(
+        Array.isArray(p) &&
+        p.length >= 2 &&
+        Number.isFinite(
+          Number(p[0])
+        ) &&
+        Number.isFinite(
+          Number(p[1])
+        )
+      ){
+
+        allPoints.push([
+          Number(p[0]),
+          Number(p[1])
+        ]);
+
+      }
+
+    }
+  );
+
+
+
+  /* ======================================
+     CURRENT CODA
+  ====================================== */
+
+  if(
+    Array.isArray(point) &&
+    point.length >= 2 &&
+    Number.isFinite(
+      Number(point[0])
+    ) &&
+    Number.isFinite(
+      Number(point[1])
+    )
+  ){
+
+    allPoints.push([
+      Number(point[0]),
+      Number(point[1])
+    ]);
+
+  }
+
+
+
+  if(!allPoints.length){
+
+    ctx.fillStyle =
+      "#526861";
+
+
+    ctx.font =
+      "12px DM Mono";
+
+
+    ctx.textAlign =
+      "center";
+
+
+    ctx.fillText(
+      "No embedding data available",
+      width / 2,
+      height / 2
+    );
+
+
+    return;
+
+  }
+
+
+
+  /* ======================================
+     FIND PCA RANGE
+  ====================================== */
+
+  let minX =
+    Infinity;
+
+  let maxX =
+    -Infinity;
+
+  let minY =
+    Infinity;
+
+  let maxY =
+    -Infinity;
+
+
+  allPoints.forEach(
+    p=>{
+
+      minX =
+        Math.min(
+          minX,
+          p[0]
+        );
+
+
+      maxX =
+        Math.max(
+          maxX,
+          p[0]
+        );
+
+
+      minY =
+        Math.min(
+          minY,
+          p[1]
+        );
+
+
+      maxY =
+        Math.max(
+          maxY,
+          p[1]
+        );
+
+    }
+  );
+
+
+  const rangeX =
+    Math.max(
+      maxX - minX,
+      0.0001
+    );
+
+
+  const rangeY =
+    Math.max(
+      maxY - minY,
+      0.0001
+    );
+
+
+  const padding =
+    45;
+
+
+
+  function mapX(x){
+
+    return (
+      padding +
+      (
+        (x - minX) /
+        rangeX
+      ) *
+      (
+        width -
+        padding * 2
+      )
+    );
+
+  }
+
+
+
+  function mapY(y){
+
+    /*
+      Canvas coordinates have
+      Y increasing downward.
+    */
+
+    return (
+      height -
+      padding -
+      (
+        (y - minY) /
+        rangeY
+      ) *
+      (
+        height -
+        padding * 2
+      )
+    );
+
+  }
+
+
+
+  /* ======================================
+     DRAW REFERENCE CODAS
+  ====================================== */
+
+  referencePoints.forEach(
+    p=>{
+
+      if(
+        !Array.isArray(p) ||
+        p.length < 3
+      ){
+
+        return;
+
+      }
+
+
+      const x =
+        mapX(
+          Number(p[0])
+        );
+
+
+      const y =
+        mapY(
+          Number(p[1])
+        );
+
+
+      const clan =
+        Number(p[2]) || 0;
+
+
+      /*
+        Each clan gets its own
+        deterministic color.
+      */
+
+      const hue =
+        (
+          clan * 67
+        ) % 360;
+
+
+      ctx.beginPath();
+
+
+      ctx.arc(
+        x,
+        y,
+        4,
+        0,
+        Math.PI * 2
+      );
+
+
+      ctx.fillStyle =
+        `hsla(
+          ${hue},
+          70%,
+          65%,
+          .72
+        )`;
+
+
+      ctx.fill();
+
+    }
+  );
+
+
+
+  /* ======================================
+     CURRENT CODA
+  ====================================== */
+
+  if(
+    Array.isArray(point) &&
+    point.length >= 2 &&
+    Number.isFinite(
+      Number(point[0])
+    ) &&
+    Number.isFinite(
+      Number(point[1])
+    )
+  ){
+
+    const currentX =
+      mapX(
+        Number(point[0])
+      );
+
+
+    const currentY =
+      mapY(
+        Number(point[1])
+      );
+
+
+
+    /*
+      Glow
+    */
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+      currentX,
+      currentY,
+      18,
+      0,
+      Math.PI * 2
+    );
+
+
+    ctx.fillStyle =
+      "rgba(117,230,196,.12)";
+
+
+    ctx.fill();
+
+
+
+    /*
+      Outer ring
+    */
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+      currentX,
+      currentY,
+      10,
+      0,
+      Math.PI * 2
+    );
+
+
+    ctx.strokeStyle =
+      "#75e6c4";
+
+
+    ctx.lineWidth =
+      2;
+
+
+    ctx.stroke();
+
+
+
+    /*
+      Main point
+    */
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+      currentX,
+      currentY,
+      6,
+      0,
+      Math.PI * 2
+    );
+
+
+    ctx.fillStyle =
+      "#75e6c4";
+
+
+    ctx.fill();
+
+
+
+    /*
+      Current coda label
+    */
+
+    ctx.fillStyle =
+      "#75e6c4";
+
+
+    ctx.font =
+      "11px DM Mono";
+
+
+    ctx.textAlign =
+      "left";
+
+
+    ctx.fillText(
+      "CURRENT CODA",
+      currentX + 15,
+      currentY - 12
+    );
+
+  }
+
+
+
+  /* ======================================
+     CREATE HTML LEGEND
+  ====================================== */
+
+  const legend =
+    document.getElementById(
+      "mapLegend"
+    );
+
+
+  legend.innerHTML =
+    "";
+
+
+  if(
+    META.clans &&
+    META.clans.length
+  ){
+
+    META.clans.forEach(
+      (clanName,index)=>{
+
+        const hue =
+          (
+            index * 67
+          ) % 360;
+
+
+        const item =
+          document.createElement(
+            "div"
+          );
+
+
+        item.className =
+          "map-legend-item";
+
+
+        item.innerHTML = `
+
+          <span
+            class="map-dot"
+            style="
+              background:
+              hsl(
+                ${hue},
+                70%,
+                65%
+              );
+            "
+          ></span>
+
+          <span>
+            ${escapeHTML(
+              clanName
+            )}
+          </span>
+
+        `;
+
+
+        legend.appendChild(
+          item
+        );
+
+      }
+    );
+
+
+    /*
+      Current coda legend
+    */
+
+    const current =
+      document.createElement(
+        "div"
+      );
+
+
+    current.className =
+      "map-legend-item";
+
+
+    current.innerHTML = `
+
+      <span
+        class="current-dot"
+      ></span>
+
+      <span>
+        Current Coda
+      </span>
+
+    `;
+
+
+    legend.appendChild(
+      current
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   HTML ESCAPING
+===================================================== */
+
+function escapeHTML(value){
+
+  return String(value)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+
+}
+
+
+
+/* =====================================================
+   RESPONSIVE MAP REDRAW
+===================================================== */
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    /*
+      Redraw current map point
+      after window resize.
+    */
+
+    drawMap(
+      window.lastPoint || null
+    );
+
+  }
+);
+
+
+
+/*
+  Store the most recent point so
+  resize can redraw it.
+*/
+
+const originalRenderResult =
+  renderResult;
+
+
+/*
+  Instead of modifying the main
+  rendering function, update the
+  global point whenever results
+  arrive.
+*/
+
+const oldRenderResult =
+  renderResult;
+
+
+
+/* =====================================================
+   START APPLICATION
+===================================================== */
+
+init();
+
+</script>
+
+
+</body>
+</html>
